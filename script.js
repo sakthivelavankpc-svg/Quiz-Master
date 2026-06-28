@@ -28,6 +28,33 @@ function isCorrect(userAnswer, correctAnswer) {
     return userAnswer.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
 }
 
+// ... (After your initial variables and initialization like 'const db = ...')
+
+// 1. PLACE THE NEW HELPER FUNCTION HERE:
+function renderLibrary(quizzes) {
+    const grid = $("libraryGrid");
+    if (!grid) return; // Prevents error if grid ID doesn't exist
+    grid.innerHTML = ""; 
+    
+    if (quizzes.length === 0) {
+        grid.innerHTML = "<p>No quizzes found in the cloud.</p>";
+        return;
+    }
+
+    quizzes.forEach(q => {
+        const card = document.createElement("div");
+        card.className = "quiz-card";
+        card.innerHTML = `
+            <span class="card-badge" style="background:var(--primary)">${q.subject || 'General'}</span>
+            <h4 class="card-title">${q.examName || 'Untitled Quiz'}</h4>
+            <div class="card-sub">${q.topic || 'No topic specified'} | ${q.classGrade || 'N/A'}</div>
+            <button class="btn-primary" onclick="startQuiz('${q.id}')">Play</button>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+// 2. THEN, UPDATE YOUR EXISTING FUNCTION HERE:
 async function loadLibraryFromCloud() {
     const libCount = $("libCount");
     if (!libCount) return;
@@ -41,6 +68,7 @@ async function loadLibraryFromCloud() {
         });
         
         libCount.textContent = `${quizzes.length} Quizzes Loaded`;
+        renderLibrary(quizzes); // <--- Add this call here
     } catch (error) {
         console.error("Database Error:", error);
         libCount.textContent = "Error loading";
