@@ -78,7 +78,14 @@ async function loadLibraryFromCloud() {
 window.addEventListener('load', async () => {
     await loadLibraryFromCloud();
 });
+// Change your function definition from:
+// function startQuiz(quizId) { ... }
 
+// To this:
+window.startQuiz = function(quizId) {
+    console.log("Starting quiz:", quizId);
+    // ... rest of your code
+};
 // NOTE: When processing CSV/Manual rows, ensure your mapping looks like this:
 // question: row[0],
 // options: [row[1], row[2], row[3], row[4]],
