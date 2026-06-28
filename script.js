@@ -5,15 +5,13 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase
 
 // 2. CONFIGURATION
 const firebaseConfig = {
-  apiKey: "AIzaSyAnxIsftWdUxtHEh7nxX1UPRA29c0n1444",
+  apiKey: "AIzaSy...",
   authDomain: "quiz-master-3e489.firebaseapp.com",
   projectId: "quiz-master-3e489",
   storageBucket: "quiz-master-3e489.firebasestorage.app",
   messagingSenderId: "741393992507",
-  appId: "1:741393992507:web:b28cd8fcda2b74f85b851e",
-  measurementId: "G-K3W2FKZRN9"
+  appId: "1:741393992507:web:b28cd8fcda2b74f85b851e"
 };
-
 // 3. INITIALIZATION
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
@@ -46,10 +44,17 @@ function renderLibrary(quizzes) {
 }
 
 async function loadLibraryFromCloud() {
+    console.log("Attempting to connect to Firestore...");
     try {
-        const querySnapshot = await getDocs(collection(db, "quizzes"));
+        const colRef = collection(db, "default"); // Adjust this name
+        const querySnapshot = await getDocs(colRef);
+        console.log("Documents found:", querySnapshot.size); // Check this in F12 Console
+        
         const quizzes = [];
-        querySnapshot.forEach((doc) => { quizzes.push({ id: doc.id, ...doc.data() }); });
+        querySnapshot.forEach((doc) => {
+            quizzes.push({ id: doc.id, ...doc.data() });
+        });
+        
         renderLibrary(quizzes);
     } catch (error) {
         console.error("Database Error:", error);
