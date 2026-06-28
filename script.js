@@ -19,46 +19,30 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
-// 4. APP LOGIC
+// 4. HELPERS
 const $ = (id) => document.getElementById(id);
 
-// --- FIX: Robust Answer Comparison ---
-function isCorrect(userAnswer, correctAnswer) {
-    if (!userAnswer || !correctAnswer) return false;
-    return userAnswer.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
-}
-
-// ... (After your initial variables and initialization like 'const db = ...')
-
-// 1. PLACE THE NEW HELPER FUNCTION HERE:
+// 5. RENDER LIBRARY
 function renderLibrary(quizzes) {
     const grid = $("libraryGrid");
-    if (!grid) return; // Prevents error if grid ID doesn't exist
+    if (!grid) return;
     grid.innerHTML = ""; 
     
-    if (quizzes.length === 0) {
-        grid.innerHTML = "<p>No quizzes found in the cloud.</p>";
-        return;
-    }
-
     quizzes.forEach(q => {
         const card = document.createElement("div");
         card.className = "quiz-card";
         card.innerHTML = `
-            <span class="card-badge" style="background:var(--primary)">${q.subject || 'General'}</span>
-            <h4 class="card-title">${q.examName || 'Untitled Quiz'}</h4>
-            <div class="card-sub">${q.topic || 'No topic specified'} | ${q.classGrade || 'N/A'}</div>
-            <button class="btn-primary" onclick="startQuiz('${q.id}')">Play</button>
+            <h4>${q.examName || 'Untitled Quiz'}</h4>
+            <button class="btn-primary" onclick="window.startQuiz('${q.id}')">Play</button>
         `;
         grid.appendChild(card);
     });
 }
 
-// 2. THEN, UPDATE YOUR EXISTING FUNCTION HERE:
+// 6. CLOUD FETCHING
 async function loadLibraryFromCloud() {
     const libCount = $("libCount");
     if (!libCount) return;
-    libCount.textContent = "Loading...";
     
     try {
         const querySnapshot = await getDocs(collection(db, "quizzes"));
@@ -68,25 +52,19 @@ async function loadLibraryFromCloud() {
         });
         
         libCount.textContent = `${quizzes.length} Quizzes Loaded`;
-        renderLibrary(quizzes); // <--- Add this call here
+        renderLibrary(quizzes);
     } catch (error) {
         console.error("Database Error:", error);
         libCount.textContent = "Error loading";
     }
 }
 
+// 7. EXPOSE FUNCTIONS TO WINDOW (Fixes 'not defined' error)
+window.startQuiz = function(quizId) {
+    console.log("Starting quiz:", quizId);
+    // Add your quiz start logic here
+};
+
 window.addEventListener('load', async () => {
     await loadLibraryFromCloud();
 });
-// Change your function definition from:
-// function startQuiz(quizId) { ... }
-
-// To this:
-window.startQuiz = function(quizId) {
-    console.log("Starting quiz:", quizId);
-    // ... rest of your code
-};
-// NOTE: When processing CSV/Manual rows, ensure your mapping looks like this:
-// question: row[0],
-// options: [row[1], row[2], row[3], row[4]],
-// correct: row[5] // The column containing the exact match text
