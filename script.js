@@ -5,12 +5,13 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase
 
 // 2. CONFIGURATION
 const firebaseConfig = {
-  apiKey: "AIzaSy...",
+  apiKey: "AIzaSyAnxIsftWdUxtHEh7nxX1UPRA29c0n1444",
   authDomain: "quiz-master-3e489.firebaseapp.com",
   projectId: "quiz-master-3e489",
   storageBucket: "quiz-master-3e489.firebasestorage.app",
   messagingSenderId: "741393992507",
-  appId: "1:741393992507:web:b28cd8fcda2b74f85b851e"
+  appId: "1:741393992507:web:b28cd8fcda2b74f85b851e",
+  measurementId: "G-K3W2FKZRN9"
 };
 // 3. INITIALIZATION
 const app = initializeApp(firebaseConfig);
