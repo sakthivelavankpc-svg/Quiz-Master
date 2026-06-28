@@ -1,5 +1,4 @@
 // Import Firebase modules directly from the CDN
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
@@ -19,11 +18,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-// 👇 ADD THIS LINE TO INITIALIZE FIRESTORE
+// Initialize Firestore
 const db = getFirestore(app);
 
-// ... rest of your code
-
+// --- The rest of your script follows here ---
+// Ensure you keep your existing DOM utilities, event listeners, 
+// and logic functions below this line.
 // DOM Utilities
 const $ = (id) => document.getElementById(id);
 const show = (el) => el && el.classList.remove("hidden");
