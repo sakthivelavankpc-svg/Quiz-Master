@@ -1,6 +1,6 @@
-// 1. IMPORT FIREBASE MODULES
+// 1. IMPORT FIREBASE MODULES (Only one set of these!)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
 
 // 2. CONFIGURATION
@@ -18,16 +18,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
-
-// 4. HELPERS
 const $ = (id) => document.getElementById(id);
 
-// 5. RENDER LIBRARY
+// 4. DEFINE FUNCTION BEFORE ATTACHING
+function startQuiz(quizId) {
+    console.log("Starting quiz:", quizId);
+    // Add your quiz logic here
+}
+
+// 5. ATTACH TO WINDOW
+window.startQuiz = startQuiz;
+
+// 6. RENDER & LOAD
 function renderLibrary(quizzes) {
     const grid = $("libraryGrid");
     if (!grid) return;
     grid.innerHTML = ""; 
-    
     quizzes.forEach(q => {
         const card = document.createElement("div");
         card.className = "quiz-card";
@@ -39,32 +45,15 @@ function renderLibrary(quizzes) {
     });
 }
 
-// 6. CLOUD FETCHING
 async function loadLibraryFromCloud() {
-    const libCount = $("libCount");
-    if (!libCount) return;
-    
     try {
         const querySnapshot = await getDocs(collection(db, "quizzes"));
         const quizzes = [];
-        querySnapshot.forEach((doc) => {
-            quizzes.push({ id: doc.id, ...doc.data() });
-        });
-        
-        libCount.textContent = `${quizzes.length} Quizzes Loaded`;
+        querySnapshot.forEach((doc) => { quizzes.push({ id: doc.id, ...doc.data() }); });
         renderLibrary(quizzes);
     } catch (error) {
         console.error("Database Error:", error);
-        libCount.textContent = "Error loading";
     }
 }
 
-// 7. EXPOSE FUNCTIONS TO WINDOW (Fixes 'not defined' error)
-window.startQuiz = function(quizId) {
-    console.log("Starting quiz:", quizId);
-    // Add your quiz start logic here
-};
-
-window.addEventListener('load', async () => {
-    await loadLibraryFromCloud();
-});
+window.addEventListener('DOMContentLoaded', loadLibraryFromCloud);
